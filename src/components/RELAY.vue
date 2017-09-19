@@ -5,7 +5,7 @@ export default {
     state: Boolean
   },
   render (h, context) {
-    console.log('relay trigger')
+    console.log('relay trigger, state is', context.props.state)
   }
 }
 </script>

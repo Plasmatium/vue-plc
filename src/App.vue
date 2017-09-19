@@ -2,7 +2,7 @@
   <div id="app">
     <img src="./assets/logo.png">
     <hello></hello>
-    <PLC :in="inputArr" :out="outputObj" :transfer="transfer">0</PLC>
+    <PLC :input="inputArr" :output="outputObj">0</PLC>
   </div>
 </template>
 
@@ -18,17 +18,8 @@ export default {
   },
   data () {
     return {
-      inputArr: [1, 1, 1],
-      outputObj: {},
-      transfer: {
-        i0: {type: 'DI'},
-        i1: {type: 'DI'},
-        q0: {type: 'RELAY'},
-        t0: {type: 'TIMER', timeout: 3000},
-        transfunc ({i0, i1, q0, t0}) {
-          console.log('1')
-        }
-      }
+      inputArr: [false, false],
+      outputObj: {q: undefined}
     }
   }
 }
