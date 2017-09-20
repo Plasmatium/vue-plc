@@ -2,25 +2,39 @@
   <div id="app">
     <img src="./assets/logo.png">
     <hello></hello>
-    <PLC :input="inputArr" :output="outputObj">0</PLC>
+    {{blockFun}}
   </div>
 </template>
 
 <script>
 import Hello from './components/Hello'
-import PLC from './components/PLC'
+import {makeLogicBlock} from './components/PLC.js'
 
 export default {
   name: 'app',
   components: {
-    Hello,
-    PLC
+    Hello
   },
   data () {
     return {
-      inputArr: [false, false],
-      outputObj: {q: undefined}
+      logicParam: {
+        input: {i0: false, i1: false},
+        output: {q0: undefined},
+        blocks: [
+          {name: 'i0', type: 'INPUT', data: {}},
+          {name: 'i1', type: 'INPUT', data: {}},
+          {name: 'q0', type: 'RELAY', data: {state: 0}}
+        ],
+        transfunc ({i0, q0, i1}) {
+          console.log(i0, q0, i1)
+        }
+      }
     }
+  },
+  created () {
+    this.trigger = makeLogicBlock(this.$createElement, this.logicParam)
+  },
+  computed: {
   }
 }
 </script>
