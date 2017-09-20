@@ -3,13 +3,11 @@ export default {
   functional: true,
   props: {
     name: String,
-    state: Boolean,
+    data: Object,
     lineIn: Function,
-    lineOut: Boolean
+    lineOut: Number
   },
   render (h, context) {
-    debugger
-    context.props.lineOut = context.props.state
     return context.props
   }
 }

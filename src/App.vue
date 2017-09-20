@@ -2,7 +2,7 @@
   <div id="app">
     <img src="./assets/logo.png">
     <hello></hello>
-    {{blockFun}}
+    {{logicParam.output}}
   </div>
 </template>
 
@@ -19,20 +19,19 @@ export default {
     return {
       logicParam: {
         input: {i0: false, i1: false},
-        output: {q0: undefined},
+        output: undefined,
         blocks: [
-          {name: 'i0', type: 'INPUT', data: {}},
-          {name: 'i1', type: 'INPUT', data: {}},
-          {name: 'q0', type: 'RELAY', data: {state: 0}}
+          {name: 'q0', type: 'RELAY'}
         ],
         transfunc ({i0, q0, i1}) {
-          console.log(i0, q0, i1)
+          debugger
+          return {i0, q0, i1}
         }
       }
     }
   },
   created () {
-    this.trigger = makeLogicBlock(this.$createElement, this.logicParam)
+    makeLogicBlock(this.$createElement, this.logicParam)
   },
   computed: {
   }
