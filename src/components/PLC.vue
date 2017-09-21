@@ -1,5 +1,5 @@
 <script>
-import Vue from 'vue'
+// import Vue from 'vue'
 import maker from './functionalPLC'
 
 export default {
@@ -30,7 +30,8 @@ export default {
       })
     })
 
-    Vue.set(logicParam, 'OUTPUT', logicParam.transfunc(transfuncArgs))
+    // Vue.set(logicParam, 'OUTPUT', logicParam.transfunc(transfuncArgs))
+    logicParam.OUTPUT = logicParam.transfunc(transfuncArgs)
     return
   }
 }
