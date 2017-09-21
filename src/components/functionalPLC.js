@@ -1,7 +1,14 @@
-// 纯函数式的PLC思维方式组件
-// 组件有：INPUT，RELAY，TIMER，PULSE，CALC等
-// 辅助函数SET，RESET，ONCE等
+// INPUT, RELAY, TIMER, RESET, SET, PULSE
+//
 
-const makeRELAY = (statePool, name, initState) => {
-
+const RELAY = (data) => {
+  let rslt = {state: data.state}
+  rslt.toString = () => rslt.state
+  rslt.lineIn = (newState) => { data.state = newState }
 }
+
+const maker = {
+  RELAY
+}
+
+export default maker

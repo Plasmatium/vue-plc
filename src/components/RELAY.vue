@@ -3,12 +3,9 @@ export default {
   functional: true,
   props: {
     name: String,
-    data: Object,
-    lineIn: Function,
-    lineOut: Number
+    param: Object
   },
   render (h, context) {
-    return context.props
   }
 }
 </script>

@@ -2,12 +2,9 @@
 export default {
   functional: true,
   props: {
-    name: String,
-    lineIn: Function,
-    lineOut: Boolean
+    param: [Number, Boolean]
   },
   render (h, context) {
-    return context.props
   }
 }
 </script>
