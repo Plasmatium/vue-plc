@@ -5,8 +5,8 @@
     <!-- {{logicParam.output}} -->
     <hr>
     <plc :logicParam="logicParam"></plc>
-    <!-- <p>in1: {{in1}}</p>
-    <p>output: {{output}}</p> -->
+    <p>in1: {{in1}}</p>
+    <p>output: {{output}}</p>
   </div>
 </template>
 
@@ -33,6 +33,7 @@ export default {
           }
         },
         transfunc ({i0, q0, i1}) {
+          q0.lineIn(!(i0 * 1) * q0 + i1)
           return {i0, q0, i1}
         },
         OUTPUT: undefined
@@ -43,19 +44,19 @@ export default {
     // makeLogicBlock(this.$createElement, this.logicParam)
   },
   computed: {
-  //   in1: {
-  //     get () {
-  //       return this.logicParam.input.i0
-  //     },
-  //     set (newVal) {
-  //       this.logicParam.input.i0 = newVal
-  //     }
-  //   },
-  //   output () {
-  //     let rslt = this.logicParam.output
-  //     console.log(rslt)
-  //     return rslt
-  //   }
+    in1: {
+      get () {
+        return this.logicParam.INPUT.i1
+      },
+      set (newVal) {
+        this.logicParam.INPUT.i1 = newVal
+      }
+    },
+    output () {
+      let rslt = this.logicParam.OUTPUT
+      console.log(rslt)
+      return rslt
+    }
   }
 }
 </script>

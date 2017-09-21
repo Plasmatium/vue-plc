@@ -4,7 +4,8 @@
 const RELAY = (data) => {
   let rslt = {state: data.state}
   rslt.toString = () => rslt.state
-  rslt.lineIn = (newState) => { data.state = newState }
+  rslt.lineIn = (newState) => { data.state = !!newState }
+  return rslt
 }
 
 const maker = {

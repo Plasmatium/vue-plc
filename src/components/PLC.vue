@@ -1,4 +1,5 @@
 <script>
+import Vue from 'vue'
 import maker from './functionalPLC'
 
 export default {
@@ -7,9 +8,8 @@ export default {
     logicParam: Object
   },
   render (h, context) {
-    debugger
     let logicParam = context.props.logicParam
-    let transfuncArgs = {...logicParam.input}
+    let transfuncArgs = {...logicParam.INPUT}
 
     let functionBlocks = logicParam.functionBlocks
     Object.keys(functionBlocks).forEach(blockType => {
@@ -30,7 +30,7 @@ export default {
       })
     })
 
-    transfuncArgs
+    Vue.set(logicParam, 'OUTPUT', logicParam.transfunc(transfuncArgs))
     return
   }
 }
