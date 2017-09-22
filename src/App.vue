@@ -35,17 +35,9 @@ export default {
         transfunc ({i0, q0, i1}) {
           // q0.lineIn(!(i0 * 1) * q0 + i1)
           q0.lineIn(!(i0 * 1) * q0 + i1)
-          return {i0, q0, i1}
-        }
-        // OUTPUT: undefined
-        // VERY IMPORTANT: 此处OUTPUT必须不能有
-        // 这样的OUTPUT是非响应式的，能够避免responsive死循环
-        // 此机制有待更深入挖掘理解
-        // 但是问题并没有解决，随着OUTPUT不再responsive，OUTPUT也将
-        // 变成静态的，无法实时获取正确的值（但是通过console.log可以看到
-        // 内部的值确实按照起停保的功能来运行。
-        // 可以看到，一旦以任何方式将OUTPUT变成responsive，那么就会死循环，
-        // 比如用Vue.set使其responsive。
+          return {i0, i1, q0: q0.toString()}
+        },
+        OUTPUT: undefined
       }
     }
   },

@@ -1,5 +1,4 @@
 <script>
-// import Vue from 'vue'
 import maker from './functionalPLC'
 
 export default {
@@ -30,9 +29,15 @@ export default {
       })
     })
 
-    // Vue.set(logicParam, 'OUTPUT', logicParam.transfunc(transfuncArgs))
-    logicParam.OUTPUT = logicParam.transfunc(transfuncArgs)
-    return
+    // OUTPUT初始值必须是undefined作为标记，初次使用进行reactive化，
+    // 后面直接Object.assign，避免reactive死循环。
+    // 此方式存在缺陷，因为只能在output里面放简单值，不能放Object类型。
+    let output = logicParam.transfunc(transfuncArgs)
+    if (logicParam.OUTPUT === undefined) {
+      logicParam.OUTPUT = output
+    } else {
+      Object.assign(logicParam.OUTPUT, output)
+    }
   }
 }
 </script>
