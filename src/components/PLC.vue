@@ -1,43 +1,39 @@
 <script>
 import maker from './functionalPLC'
 
+// const extractBoolean = blocks => {
+//   let rslt = {}
+//   Object.keys(blocks).forEach(blockName => {
+//     rslt[blockName] = Boolean(~~blocks[blockName])
+//   })
+//   return rslt
+// }
+
 export default {
   functional: true,
   props: {
     logicParam: Object
   },
   render (h, context) {
+    console.time('logicRenderTime')
     let logicParam = context.props.logicParam
-    let transfuncArgs = {...logicParam.INPUT}
+    let {input, blocks} = logicParam
+    let transfuncArgs = {...input, ...blocks}
+    logicParam.transfunc(transfuncArgs)
+    console.log('lalala', transfuncArgs)
+    console.timeEnd('logicRenderTime')
+  },
 
-    let functionBlocks = logicParam.functionBlocks
-    Object.keys(functionBlocks).forEach(blockType => {
-      let blockMaker = maker[blockType]
-      if (!blockMaker) {
-        // TODO warn
-        console.log('Error, no such blockType:', blockType)
-        return
-      }
-      let rawBlocks = functionBlocks[blockType]
-      Object.keys(rawBlocks).forEach(blockName => {
-        if (transfuncArgs[blockName]) {
-          // TODO: warn
-          console.log('Duplicated blockName:', blockName)
-          return
-        }
-        transfuncArgs[blockName] = blockMaker(rawBlocks[blockName])
-      })
+  // other function
+  initLogicParam (param) {
+    let blocks = {}
+    param.blocksParam.forEach(blockParam => {
+      let BlockMaker = maker[blockParam.type]
+      let block = new BlockMaker(blockParam)
+      blocks[blockParam.name] = block
     })
-
-    // OUTPUT初始值必须是undefined作为标记，初次使用进行reactive化，
-    // 后面直接Object.assign，避免reactive死循环。
-    // 此方式存在缺陷，因为只能在output里面放简单值，不能放Object类型。
-    let output = logicParam.transfunc(transfuncArgs)
-    if (logicParam.OUTPUT === undefined) {
-      logicParam.OUTPUT = output
-    } else {
-      Object.assign(logicParam.OUTPUT, output)
-    }
+    param.blocks = blocks
+    return param
   }
 }
 </script>

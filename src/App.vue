@@ -4,41 +4,41 @@
     <hello></hello>
     <!-- {{logicParam.output}} -->
     <hr>
-    <plc :logicParam="logicParam"></plc>
+    <PLC :logicParam="logicParam"></PLC>
     <p>in1: {{in1}}</p>
-    <p>output: {{output}}</p>
+    <p>{{logicParam.blocks.q0.toString()}}</p>
   </div>
 </template>
 
 <script>
 import Hello from './components/Hello'
-import plc from './components/PLC.vue'
+import PLC from './components/PLC.vue'
 
 export default {
   name: 'app',
   components: {
     Hello,
-    plc
+    PLC
   },
   data () {
     return {
-      logicParam: {
-        INPUT: {
+      logicParam: PLC.initLogicParam({
+        input: {
           i0: false,
           i1: false
         },
-        functionBlocks: {
-          RELAY: {
-            q0: {state: false}
-          }
-        },
-        transfunc ({i0, q0, i1}) {
-          // q0.lineIn(!(i0 * 1) * q0 + i1)
-          q0.lineIn(!(i0 * 1) * q0 + i1)
-          return {i0, i1, q0: q0.toString()}
-        },
-        OUTPUT: undefined
-      }
+        blocksParam: [
+          {name: 'q0', type: 'Relay'},
+          {name: 't0', type: 'Timer', timeout: 3000},
+          {name: 't1', type: 'Timer', timeout: 2000}
+        ],
+        transfunc ({i0, q0, i1, t0}) {
+          // q0.lineIn((i0 ^ 1) * q0 + i1)
+          let m0 = (i0 ^ 1) * (t0 ^ 1) * q0 + i1
+          q0.lineIn(m0)
+          t0.lineIn(m0)
+        }
+      })
     }
   },
   created () {
@@ -47,24 +47,26 @@ export default {
   computed: {
     in1: {
       get () {
-        return this.logicParam.INPUT.i1
+        return this.logicParam.input.i1
       },
       set (newVal) {
-        this.logicParam.INPUT.i1 = newVal
+        this.logicParam.input.i1 = newVal
       }
     },
     in0: {
       get () {
-        return this.logicParam.INPUT.i0
+        return this.logicParam.input.i0
       },
       set (newVal) {
-        this.logicParam.INPUT.i0 = newVal
+        this.logicParam.input.i0 = newVal
       }
     },
     output () {
-      let rslt = this.logicParam.OUTPUT
-      console.log(rslt)
-      return rslt
+      // output 不知为何引起reactive dead loop
+      let {q0, t0} = this.logicParam.blocks
+      let {i0, i1} = this.logicParam.input
+      console.log({i0, i1, q0, t0})
+      return {i0, i1, q0, t0}
     }
   }
 }
