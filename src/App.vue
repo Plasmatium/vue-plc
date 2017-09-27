@@ -2,10 +2,12 @@
   <div id="app">
     <img src="./assets/logo.png">
     <hello></hello>
-    <!-- {{logicParam.output}} -->
+    <input type="checkbox" v-model="logicParam.input.i0">i0</input>
+    <input type="checkbox" v-model="logicParam.input.i1">i1</input>
+    <hr>
+    {{logicParam.blocks.t0}}
     <hr>
     <PLC :logicParam="logicParam"></PLC>
-    <p>in1: {{in1}}</p>
     <p>{{logicParam.blocks.q0.toString()}}</p>
   </div>
 </template>
@@ -33,7 +35,6 @@ export default {
           {name: 't1', type: 'Timer', timeout: 2000}
         ],
         transfunc ({i0, q0, i1, t0}) {
-          // q0.lineIn((i0 ^ 1) * q0 + i1)
           let m0 = (i0 ^ 1) * (t0 ^ 1) * q0 + i1
           q0.lineIn(m0)
           t0.lineIn(m0)

@@ -13,7 +13,6 @@ const Relay = class {
     if (Boolean(newState) !== this.toString()) {
       this.dataPointer.state = Boolean(newState)
     }
-    return this.dataPointer.state
   }
 }
 
@@ -23,24 +22,33 @@ const Timer = class extends Relay {
     this.timerID = null
   }
   lineIn (newState) {
-    if (Boolean(newState) && !~~(this.dataPointer.state)) {
+    if (Boolean(newState) === this.toString()) { return }
+    if (Boolean(newState) && this.timerID === null) {
       this.timerID = setTimeout(() => {
-        this.timerID = null
-        this.dataPointer.state = true
+        this.timerID = null // status changed
+        this.dataPointer.state = true // status changed
       }, this.dataPointer.timeout || 0)
     } else if (Boolean(newState) === false) {
       if (typeof this.timerID === 'number') {
         clearTimeout(this.timerID)
+        this.timerID = null // status changed
       }
-      super.lineIn(newState)
+      this.dataPointer.state = false  // status changed
     }
-    return this.dataPointer.state
+  }
+}
+
+const AdvTimer = class extends Timer {
+  constructor (dataPointer) {
+    super(dataPointer)
+    this.timeBox = []
   }
 }
 
 const maker = {
   Relay,
-  Timer
+  Timer,
+  AdvTimer
 }
 
 export default maker

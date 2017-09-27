@@ -1,14 +1,6 @@
 <script>
 import maker from './functionalPLC'
 
-// const extractBoolean = blocks => {
-//   let rslt = {}
-//   Object.keys(blocks).forEach(blockName => {
-//     rslt[blockName] = Boolean(~~blocks[blockName])
-//   })
-//   return rslt
-// }
-
 export default {
   functional: true,
   props: {
@@ -20,7 +12,6 @@ export default {
     let {input, blocks} = logicParam
     let transfuncArgs = {...input, ...blocks}
     logicParam.transfunc(transfuncArgs)
-    console.log('lalala', transfuncArgs)
     console.timeEnd('logicRenderTime')
   },
 
