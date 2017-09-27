@@ -1,5 +1,14 @@
 <!DOCTYPE html>
 <html>
+  <script>
+    var sto = setTimeout
+    setTimeout = function () {
+      console.log(arguments)
+      var rslt = sto(...arguments)
+      console.log('id is:', rslt)
+      return rslt
+    }
+  </script>
   <head>
     <meta charset="utf-8">
     <title>vue-plc</title>
