@@ -23,25 +23,35 @@ const Timer = class extends Relay {
   }
   lineIn (newState) {
     if (Boolean(newState) === this.toString()) { return }
-    if (Boolean(newState) && this.timerID === null) {
-      this.timerID = setTimeout(() => {
-        this.timerID = null // status changed
-        this.dataPointer.state = true // status changed
-      }, this.dataPointer.timeout || 0)
-    } else if (Boolean(newState) === false) {
-      if (typeof this.timerID === 'number') {
-        clearTimeout(this.timerID)
-        this.timerID = null // status changed
-      }
-      this.dataPointer.state = false  // status changed
+    if (newState) {
+      this.rollup()
+    } else {
+      this.shutup()
     }
+  }
+  shutup () {
+    clearTimeout(this.timerID)
+    this.timerID = null
+    this.dataPointer.state = false
+  }
+  rollup () {
+    if (this.timerID !== null) { return }
+    this.timerID = setTimeout(() => {
+      this.timerID = null // status changed
+      this.dataPointer.state = true // status changed
+    }, this.dataPointer.timeout || 0)
   }
 }
 
 const AdvTimer = class extends Timer {
   constructor (dataPointer) {
     super(dataPointer)
-    this.timeBox = []
+    this.stage = 0
+    this.totalElapse = 0
+  }
+  lineIn (newState) {
+    if (Boolean(newState) === this.toString()) { return }
+    if (Boolean(newState) === false) {}
   }
 }
 
