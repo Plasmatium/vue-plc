@@ -22,12 +22,11 @@ const Timer = class extends Relay {
     this.timerID = null
   }
   lineIn (newState) {
+    if (Boolean(newState) === this.toString()) { return }
     if (!newState) {
       this.shutup()
       return
     }
-    // stop trigger when timer.state is on
-    if (Boolean(newState) === this.toString()) { return }
     this.rollup()
   }
   shutup () {
@@ -95,10 +94,45 @@ const AdvTimer = class extends Timer {
   }
 }
 
+const Counter = class extends Relay {
+  constructor (dataPointer) {
+    super(dataPointer)
+    this.dataPointer.start = this.dataPointer.start || 0
+    this.dataPointer.target = this.datPOinter.target || 0
+    this.dataPointer.step = this.dataPointer.step || 1
+    this.enable = false
+    this.count = this.dataPointer.start
+    this.triggerState = false
+  }
+  lineIn (newState) {
+    if (Boolean(newState) === this.toString()) { return }
+    this.enable = Boolean(newState)
+    if (!this.enable) { this.reset() }
+  }
+  triggerIn (newTriggerState) {
+    if (!this.enable) { return }
+    if (Boolean(newTriggerState) === this.triggerState) { return }
+    if (!newTriggerState) {
+      // neg-eadge, don't trigger
+      this.triggerState = false
+      return
+    }
+    // pos-edge, trigger
+    this.triggerState = true
+    this.count += this.dataPointer.step
+    // too complex, like a nightmare, should be reconstruct
+  }
+  resetIn () {}
+  reset () {
+    this.num = this.dataPointer.start
+  }
+}
+
 const maker = {
   Relay,
   Timer,
-  AdvTimer
+  AdvTimer,
+  Counter
 }
 
 export default maker
