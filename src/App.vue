@@ -17,6 +17,7 @@
 <script>
 import Hello from './components/Hello'
 import PLC from './components/PLC.vue'
+import store from './store'
 
 export default {
   name: 'app',
@@ -24,6 +25,7 @@ export default {
     Hello,
     PLC
   },
+  store,
   data () {
     return {
       logicParam: PLC.initLogicParam({
