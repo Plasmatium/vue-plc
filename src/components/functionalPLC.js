@@ -1,16 +1,36 @@
 // INPUT, RELAY, TIMER, RESET, SET, PULSE
 //
 
+const pe = (block) => {
+  if (block.dataPointer.state === true &&
+    block.dataPointer.prevState === false) {
+    return true
+  } else {
+    return false
+  }
+}
+
+const ne = (block) => {
+  if (block.dataPointer.state === false &&
+    block.dataPointer.prevState === true) {
+    return true
+  } else {
+    return false
+  }
+}
+
 const Relay = class {
   constructor (dataPointer) {
     this.dataPointer = dataPointer
     this.dataPointer.state = Boolean(this.dataPointer.state)
+    this.dataPointer.prevState = this.dataPointer.state
   }
   toString () {
     return Boolean(this.dataPointer.state)
   }
   lineIn (newState) {
     if (Boolean(newState) !== this.toString()) {
+      this.dataPointer.prevState = this.dataPointer.state
       this.dataPointer.state = Boolean(newState)
     }
   }
@@ -94,45 +114,25 @@ const AdvTimer = class extends Timer {
   }
 }
 
-const Counter = class extends Relay {
-  constructor (dataPointer) {
-    super(dataPointer)
-    this.dataPointer.start = this.dataPointer.start || 0
-    this.dataPointer.target = this.datPOinter.target || 0
-    this.dataPointer.step = this.dataPointer.step || 1
-    this.enable = false
-    this.count = this.dataPointer.start
-    this.triggerState = false
-  }
-  lineIn (newState) {
-    if (Boolean(newState) === this.toString()) { return }
-    this.enable = Boolean(newState)
-    if (!this.enable) { this.reset() }
-  }
-  triggerIn (newTriggerState) {
-    if (!this.enable) { return }
-    if (Boolean(newTriggerState) === this.triggerState) { return }
-    if (!newTriggerState) {
-      // neg-eadge, don't trigger
-      this.triggerState = false
-      return
-    }
-    // pos-edge, trigger
-    this.triggerState = true
-    this.count += this.dataPointer.step
-    // too complex, like a nightmare, should be reconstruct
-  }
-  resetIn () {}
-  reset () {
-    this.num = this.dataPointer.start
-  }
-}
-
 const maker = {
   Relay,
   Timer,
-  AdvTimer,
-  Counter
+  AdvTimer
 }
 
-export default maker
+const initLogicParam = (param) => {
+  let blocks = {}
+  param.blocksParam.forEach(blockParam => {
+    let BlockMaker = maker[blockParam.type]
+    let block = new BlockMaker(blockParam)
+    blocks[blockParam.name] = block
+  })
+  param.blocks = blocks
+  return param
+}
+
+export {
+  initLogicParam,
+  pe,
+  ne
+}

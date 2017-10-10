@@ -8,10 +8,10 @@ export default {
     param: Number
   },
   computed: {
-    ...mapState(['count'])
+    ...mapState(['timer'])
   },
   render (h, context) {
-    console.log('count invoked in RELAY:', this.count)
+    console.log('timer invoked in RELAY:', this.timer)
   }
 }
 </script>

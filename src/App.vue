@@ -17,6 +17,7 @@
 <script>
 import Hello from './components/Hello'
 import PLC from './components/PLC.vue'
+import {initLogicParam} from './components/functionalPLC'
 import store from './store'
 
 export default {
@@ -28,7 +29,7 @@ export default {
   store,
   data () {
     return {
-      logicParam: PLC.initLogicParam({
+      logicParam: initLogicParam({
         input: {
           i0: false,
           i1: false
