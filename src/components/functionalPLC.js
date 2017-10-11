@@ -1,5 +1,4 @@
 // INPUT, RELAY, TIMER, RESET, SET, PULSE
-//
 
 const pe = (block) => {
   if (block.dataPointer.state === true &&
@@ -114,6 +113,48 @@ const AdvTimer = class extends Timer {
   }
 }
 
+const Block = class {
+  // dd stands for data descriptor
+  constructor (dd) {
+    this.dd = dd
+    this.dd.state = Boolean(this.dd.state)
+    this.dd.prevState = this.dd.prevState || this.dd.state
+
+    Object.entries(this.dd.subBlocks)
+    .forEach((blockName, current) => {
+      if (!('type' in current)) {
+        console.error('"type" not in block param:', current)
+        return
+      }
+      let newBlock = new Block(current)
+      newBlock.type = current.type
+      this.dd.subBlocks[blockName] = newBlock
+    })
+    // optimize for param deconstructing param assignment
+    for (let paramName in dd.params) {
+      // param like: {i0: {type: Boolean, data: true}, step: {type: Number}}
+      let param = dd.params[paramName]
+      param.data = param.data || param.type()
+      this[paramName] = {
+        toString: () => {
+          // make it an direct value while being calculating
+          // the type of return value may be none string, it depends on
+          // param.type
+          return param.data
+        },
+        lineIn: (newVal) => {
+          let type = param.type
+          if (type === Object) return
+          if (type(param.data) === type(newVal)) return
+          param.data = type(newVal)
+        }
+      }
+    }
+  }
+  run () {
+  }
+}
+
 const maker = {
   Relay,
   Timer,
@@ -134,5 +175,6 @@ const initLogicParam = (param) => {
 export {
   initLogicParam,
   pe,
-  ne
+  ne,
+  Block
 }

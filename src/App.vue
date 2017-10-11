@@ -66,7 +66,6 @@ export default {
       }
     },
     output () {
-      // output 不知为何引起reactive dead loop
       let {q0, t0} = this.logicParam.blocks
       let {i0, i1} = this.logicParam.input
       console.log({i0, i1, q0, t0})
