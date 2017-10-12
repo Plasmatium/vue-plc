@@ -51,11 +51,16 @@ const INPUT = class {
 const RELAY = INPUT
 
 const HOLDER = class {
-  constructor (dptr) {
+  static dptr = {
+    EN: {type: 'INPUT'},
+    RST: {type: 'INPUT'},
+    Q: {type: 'RELAY'}
+  }
+  constructor (data) {
     // running here, dptr = {type: "HOLDER"}
     // EN, RST, Q should init here, dptr should {type: "HOLDER", data: {...}}
     // dataInit(dptr, this)
-    this
+    dataInit(HOLDER.dptr, data, this)
   }
   rollup () {
     let {EN, RST, Q} = this
@@ -69,13 +74,13 @@ blockMaker = {
   HOLDER
 }
 
-const dataInit = (data, target = {}) => {
-  for (let blockName in data) {
-    debugger
-    let M = blockMaker[data[blockName].type]
-    target[blockName] = new M(data[blockName])
-  }
-  return target
+const dataInit = (dptr, data, target = {}) => {
+  // for (let blockName in data) {
+  //   debugger
+  //   let M = blockMaker[data[blockName].type]
+  //   target[blockName] = new M(data[blockName])
+  // }
+  // return target
 }
 
 export {
