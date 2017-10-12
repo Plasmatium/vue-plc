@@ -137,7 +137,7 @@ const Block = class {
       param.data = param.data || param.type()
       this[paramName] = {
         toString: () => {
-          // make it an direct value while being calculating
+          // direclyl make it a return value while being calculating
           // the type of return value may be none string, it depends on
           // param.type
           return param.data

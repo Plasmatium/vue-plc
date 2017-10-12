@@ -1,17 +1,16 @@
 <script>
-import {mapState} from 'vuex'
-
 export default {
-  // functional: true,
+  functional: true,
   props: {
     name: String,
-    param: Number
-  },
-  computed: {
-    ...mapState(['count'])
+    data: Object
   },
   render (h, context) {
-    console.log('count invoked in RELAY:', this.count)
+    let data = context.props.data
+    if (data.en === data.state) return
+    // type of data.en should be Boolean, ensure it by data obj's lineIn()
+    data.lastState = data.state
+    data.state = data.en
   }
 }
 </script>
