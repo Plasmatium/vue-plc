@@ -13,7 +13,7 @@
 <script>
 import Hello from './components/Hello'
 import plc from './components/runPLC'
-import {dataInit} from './components/defPLC'
+import {BLOCK} from './components/defPLC'
 
 export default {
   name: 'app',
@@ -23,9 +23,16 @@ export default {
   },
   data () {
     return {
-      data: dataInit({
-        h0: {type: 'HOLDER'},
-        rollup () {
+      data: new BLOCK({
+        params: {
+          h0: {type: 'HOLDER'}
+        },
+        interface: {
+          i0: {path: 'h0.EN', val: false},
+          i1: {path: 'h0.RST', val: false}
+        },
+        rollup ({h0}) {
+          console.log(h0)
         }
       })
     }

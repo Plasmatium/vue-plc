@@ -24,43 +24,69 @@ data generated like:
     }
   }
 `
+import objectPath from 'object-path'
+
 let blockMaker
 
 const INPUT = class {
   constructor (dptr) {
-    this.state = Boolean(dptr.state) || false
-    this.lastState = dptr.lastState || dptr.state
+    this.state = false
   }
   toString () {
     return Boolean(this.state)
   }
   lineIn (newState) {
     if (Boolean(newState) === this.state) return
-    this.lastState = this.state
     this.state = Boolean(newState)
   }
-  pe () {
-    if (!this.lastState && this.state) return true
-    else return false
+}
+// TODO: pe & ne should be a closure
+const RELAY = class extends INPUT {}
+
+const BaseBlock = class {
+  constructor (dptr) {
+    Object.entries(dptr.params).forEach(([blockName, blockDptr]) => {
+      let M = blockMaker[blockDptr.type]
+      this[blockName] = new M(blockDptr)
+    })
+    this.Q = new RELAY()
   }
-  ne () {
-    if (this.lastState && !this.state) return true
-    else return false
+  toString () {
+    return Boolean(this.Q)
+  }
+  rollup () {
+    for (let blockName in this) {
+      this[blockName].rollup && this[blockName].rollup()
+    }
   }
 }
-const RELAY = INPUT
 
-const HOLDER = class {
-  static dptr = {
-    EN: {type: 'INPUT'},
-    RST: {type: 'INPUT'},
-    Q: {type: 'RELAY'}
+const BLOCK = class extends BaseBlock {
+  constructor (block) {
+    super(block)
+    if (!block.interface) return
+    this.interface = block.interface
+    Object.entries(block.interface).forEach(([ioKey, info]) => {
+      this[ioKey] = info.val
+    })
   }
-  constructor (data) {
-    // running here, dptr = {type: "HOLDER"}
-    // EN, RST, Q should init here, dptr should {type: "HOLDER", data: {...}}
-    // dataInit(dptr, this)
-    dataInit(HOLDER.dptr, data, this)
+  energize () {
+    Object.entries(this.interface).forEach(([ioKey, info]) => {
+      objectPath.get(this, info.path).lineIn(this[ioKey])
+    })
+  }
+}
+
+const HOLDER = class extends BaseBlock {
+  static dptr = {
+    params: {
+      EN: {type: 'INPUT'},
+      RST: {type: 'INPUT'},
+      Q: {type: 'RELAY'}
+    }
+  }
+  constructor (dptr) {
+    super(HOLDER.dptr)
   }
   rollup () {
     let {EN, RST, Q} = this
@@ -68,21 +94,23 @@ const HOLDER = class {
   }
 }
 
+// const initData = (dptr) => {
+//   Object.entries(dptr.params).forEach(([blockName, blockDptr]) => {
+//     debugger
+//     let M = blockMaker[blockDptr.type]
+//     this[blockName] = new M(blockDptr)
+//   })
+// }
+
 blockMaker = {
   INPUT,
   RELAY,
+  BLOCK,
   HOLDER
 }
 
-const dataInit = (dptr, data, target = {}) => {
-  // for (let blockName in data) {
-  //   debugger
-  //   let M = blockMaker[data[blockName].type]
-  //   target[blockName] = new M(data[blockName])
-  // }
-  // return target
-}
-
 export {
-  dataInit
+  // initData,
+  BLOCK,
+  blockMaker
 }
