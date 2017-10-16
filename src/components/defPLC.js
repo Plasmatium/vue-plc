@@ -25,19 +25,43 @@ data generated like:
   }
 `
 import objectPath from 'object-path'
+import {Uid} from '../utils/uuid'
+
+let edgeUid = new Uid()
 
 let blockMaker
 
 const INPUT = class {
   constructor (dptr) {
     this.state = false
+    this.euid = edgeUid.newData({lastState: this.state})
   }
   toString () {
     return Boolean(this.state)
   }
   lineIn (newState) {
+    edgeUid[this.euid].lastState = this.state
     if (Boolean(newState) === this.state) return
     this.state = Boolean(newState)
+  }
+
+  // edge calc will just do once for certain, next time lineIn() will
+  // rewrite lastState, make it equal to this.state
+  // positive edge
+  pe () {
+    if (edgeUid[this.euid].lastState === false && this.state === true) {
+      return true
+    } else {
+      return false
+    }
+  }
+  // negtive edge
+  ne () {
+    if (edgeUid[this.euid].lastState === true && this.state === false) {
+      return true
+    } else {
+      return false
+    }
   }
 }
 // TODO: pe & ne should be a closure
@@ -67,11 +91,12 @@ const BLOCK = class extends BaseBlock {
     if (!block.interface) return
     this.interface = block.interface
     Object.entries(block.interface).forEach(([ioKey, info]) => {
-      this[ioKey] = info.val
+      this[ioKey] = info.val || false
     })
   }
   energize () {
     Object.entries(this.interface).forEach(([ioKey, info]) => {
+      if (!info.path) return
       objectPath.get(this, info.path).lineIn(this[ioKey])
     })
   }
@@ -93,14 +118,6 @@ const HOLDER = class extends BaseBlock {
     Q.lineIn((RST ^ 1) * Q + EN)
   }
 }
-
-// const initData = (dptr) => {
-//   Object.entries(dptr.params).forEach(([blockName, blockDptr]) => {
-//     debugger
-//     let M = blockMaker[blockDptr.type]
-//     this[blockName] = new M(blockDptr)
-//   })
-// }
 
 blockMaker = {
   INPUT,

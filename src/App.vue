@@ -6,7 +6,7 @@
     <pre style="text-align: left;">
     </pre>
     <hr>
-    <plc :data="data" />
+    <plc :data="data2" />
   </div>
 </template>
 
@@ -30,9 +30,14 @@ export default {
         interface: {
           i0: {path: 'h0.EN', val: false},
           i1: {path: 'h0.RST', val: false}
+        }
+      }),
+      data2: new BLOCK({
+        params: {
+          q0: {type: 'RELAY'}
         },
-        rollup ({h0}) {
-          console.log(h0)
+        interface: {
+          i0: {}
         }
       })
     }
