@@ -3,8 +3,7 @@
     <img src="./assets/logo.png">
     <hello></hello>
     <hr>
-    <pre style="text-align: left;">
-    </pre>
+    <input type="checkbox" v-model="data2.i0">i0</input>
     <hr>
     <plc :data="data2" />
   </div>
@@ -37,7 +36,19 @@ export default {
           q0: {type: 'RELAY'}
         },
         interface: {
-          i0: {}
+          i0: {val: true}
+        },
+        rollup ({i0, q0, Q}) {
+          global.count = global.count || 1
+          if (global.count === 1) { console.time('logic time') }
+          if (global.count === 1000) {
+            console.timeEnd('logic time')
+            global.count = 1
+            return
+          }
+          q0.lineIn(q0 ^ 1)
+          Q.lineIn(q0 + 0)
+          global.count += 1
         }
       })
     }

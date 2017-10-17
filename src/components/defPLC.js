@@ -89,16 +89,18 @@ const BLOCK = class extends BaseBlock {
   constructor (block) {
     super(block)
     if (!block.interface) return
-    this.interface = block.interface
+    this.getInterface = () => block.interface
     Object.entries(block.interface).forEach(([ioKey, info]) => {
       this[ioKey] = info.val || false
     })
+    this.rollup = block.rollup
   }
   energize () {
-    Object.entries(this.interface).forEach(([ioKey, info]) => {
+    Object.entries(this.getInterface()).forEach(([ioKey, info]) => {
       if (!info.path) return
       objectPath.get(this, info.path).lineIn(this[ioKey])
     })
+    this.rollup(this)
   }
 }
 
