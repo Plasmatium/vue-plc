@@ -10,11 +10,12 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import Hello from './components/Hello'
 import plc from './components/runPLC'
 import {BLOCK} from './components/defPLC'
 
-export default {
+export default Vue.extend({
   name: 'app',
   components: {
     Hello,
@@ -55,7 +56,7 @@ export default {
   },
   computed: {
   }
-}
+})
 </script>
 
 <style>
